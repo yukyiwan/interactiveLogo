@@ -24,7 +24,7 @@
 // https://zimjs.com - JavaScript Canvas Framework - Code Creativity!
 
 
-const assets = ["logo-is.png","setoff.mp3", "aimer.png", "jelly.mp3","magic.mp3","whoosh.mp3","countdowns.mp3","boomL.mp3","boom.png"];
+const assets = ["logo-is.png","setoff.mp3", "aimer.png", "jelly.mp3","magic.mp3","whoosh.mp3","countdowns.mp3"];
 const path = "assets/";
 
 const frame = new Frame("fit", 1024, 768, black, black, assets, path);
@@ -83,7 +83,6 @@ frame.on("ready", () => {
     {props:{y:stageH/2-100,rotation:360, alpha:0.5},time:0.5},
     {props:{y:stageH/2-50, alpha:1},time:3}]
     });
-
     stage.update();}
 
     // user to send the logo away
@@ -91,6 +90,9 @@ frame.on("ready", () => {
     const aimer = asset ("aimer.png").sca(0.5).alp(1).centerReg().pos(0,50,CENTER, BOTTOM);
 
     
+    // new Sprite(asset("butterfly.png"),10,4)
+    // .pos(0,50,CENTER, BOTTOM)
+    // .run({loop:true});
 
     new MotionController(aimer, "mousemove",49);
     
@@ -139,10 +141,12 @@ frame.on("ready", () => {
             
             
             timeout(5, ()=>{
-                new Label ("Route draggable and editable. On mobile? Tap somewhere else",20,null,white)
-                    .cache().centerReg().mov(0,-stageH/2+40);
-                new Label ("before tapping on an anchor point to pressmove your route...",20,null,white)
-                    .cache().centerReg().mov(0,-stageH/2+65);
+                new Label ("Route draggable and editable. On mobile? Tap somewhere else",27,"oswald",white,"#ffc312",null, null, null, null)
+                    .centerReg().centerReg()
+                    .mov(0,-stageH/2+40);
+                new Label ("before tapping on an anchor point to pressmove your route...",27,"oswald",white,"#ffc312",null, null, null, null)
+                    .centerReg().centerReg()
+                    .mov(0,-stageH/2+70);
                 
             });
           
@@ -206,7 +210,7 @@ frame.on("ready", () => {
             .alp(0)
             .pos(0,-100,CENTER)
             .animate({
-            props:{x:rand(400,stageW-400), y:rand(400,stageH-400),alpha:1,scale: random},
+            props:{x:rand(300,stageW-300), y:rand(400,stageH-400),alpha:1,scale: random},
             wait:3,
             time: 5,
             });
@@ -300,7 +304,7 @@ frame.on("ready", () => {
             loop(5, i=>{
                 // if (i<4){
                     sliders[i] = new Slider(0,1,1,"circle",60).centerReg().loc(110*i, 25,controlsB);
-                    const label = new Label({text:sLabels[i],size:20,color:white}).cache().centerReg().loc(112*i-10, 60,controlsB);
+                    const label = new Label({text:sLabels[i],size:20,color:white}).centerReg().loc(112*i-10, 60,controlsB);
   
             });
             
@@ -388,20 +392,13 @@ frame.on("ready", () => {
                 }
              });
 
-            
             sliders[4].ord(-1).change(e=>{
                 if (e.target.currentValue == 1) {
                 asset("countdowns.mp3").play();
                 track.animate({props:[{props:{alpha:0},time:0.1},
                 {props:{alpha:1},time:0.1}],loop:true,rewind:true});
-                
                 timeout(5, function(){
-                asset("boomL.mp3").play();
-                new Sprite(asset("boom.png"), 8, 6).sca(5).center().run(2);
-                });
-                
-                timeout(6.15, function(){
-                zgo("index.php");});}
+                zgo("home.html");});}
             });
 
 

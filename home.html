@@ -17,7 +17,7 @@
 <script src="https://zimjs.org/cdn/cat/01/zim.js"></script>
 <script>
 // https://zimjs.com - JavaScript Canvas Framework - Code Creativity!
-const assets = ["logofs.png", "setoff.mp3", "jelly.mp3"];
+const assets = ["logofs.png","butterfly.png", "setoff.mp3", "jelly.mp3"];
 const path = "assets/";
 const frame = new Frame("logo", 500, 500, 0, null, assets,path);
 frame.on("ready", () => {
@@ -30,7 +30,7 @@ frame.on("ready", () => {
     const artBoard = new Container().pos(10,10);
     const bg = new Rectangle(400,400,0).addTo(artBoard);
     const logo = asset ("logofs.png").sca(0.28).centerReg();
-
+    
     if (mobile()){
       Ticker.add(()=>{
          const logo = asset ("logofs.png").sca(0.3).centerReg();   
@@ -168,21 +168,29 @@ frame.on("ready", () => {
 
 </script>
 <meta name="viewport" content="width=device-width, user-scalable=no" />
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,900;1,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet"/>
 <link href="main.css" rel="stylesheet"/>
 </head>
 <body>
-    <section id="logo"></section>
-        <main>
-            <h1>Interactive anything...Starts here...</h1>
-            <p>Welcome and enjoy our interactive logo!</p>
+    <main>
+        <header id="logo"></header>
+        <section>
+            <h1>Your interactive journey</h1>
+            <h2 style="font-family: Mrs Saint Delafield; font-size: 60px; font-weight: bold; line-height: 0;">Starts here...</h2>
+            <p>Welcome to Osmanthus Group (OMG)'s website!</p>
+            <p>Stay tuned to our new app release: <i>Ride Buddy</i>. Meanwhile...</p>
             <ol>
-                <li>Click, doubleclick, mouseover or pressmove on the logo to hunt down the hidden effects.</li>
                 <li>Loop over the entire HEX library to choose your favorite colors.</li>
+                <li>Click, doubleclick, mouseover or pressmove on the logo to hunt down the hidden effects.</li>
                 <li>You are GREAT to get 5 and a GENIUS if you discover more than 8!</li>
                 <li><a style ="color:#006266; text-decoration: underline" href="logo.html">Create</a> your own OMG logo now!</li>
             </ol>
-    </main> 
-   
-   <?php include("includes/footer.php"); ?>
+            </br>
+            <p id="footer"> ©Osmanthus Group 2016-2020 | Contact us at <a href="mailto:info@osmanthusgroup.com">info@osmanthusgroup.com</a></p>
+        </section>
+    </main>
 </body>
 </html>
