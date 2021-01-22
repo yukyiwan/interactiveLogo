@@ -1,0 +1,475 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>OMG | Interactive Logo</title>
+<link rel="icon" type="image/x-icon" href = "favicon/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
+<link rel="icon" sizes="192x192" href="favicon/android-chrome-192x192.png" />
+<link rel="icon" sizes="512x512" href="favicon/android-chrome-512x512.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png" />
+<link rel="manifest" href="favicon/site.webmanifest" />
+<meta name="msapplication-TileColor" content="#da532c" />
+<meta name="msapplication-TileImage" content="favicon/mstile-150x150.png" />
+<meta name="theme-color" content="#ffffff" />
+<link href="https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,900;1,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200&display=swap" rel="stylesheet">
+<link href="main.css" rel="stylesheet"/>
+<script src="https://zimjs.org/cdn/1.3.2/createjs.js"></script>
+<script src="https://zimjs.org/cdn/cat/01/zim.js"></script>
+<script>
+
+// https://zimjs.com - JavaScript Canvas Framework - Code Creativity!
+
+
+const assets = ["logo-is.png","setoff.mp3", "aimer.png", "jelly.mp3","magic.mp3","whoosh.mp3","countdowns.mp3","boomL.mp3","boom.png"];
+const path = "assets/";
+
+const frame = new Frame("fit", 1024, 768, black, black, assets, path);
+frame.on("ready", () => {
+    const stage = frame.stage;
+    let stageW = frame.width;
+    let stageH = frame.height;
+
+//     put your code here
+
+// a starry skys with shooting stars occasionally
+
+    interval(.00001, ()=>{
+    const size = rand(.001,50);
+    new Circle (size, [white, orange, yellow])
+    .pos(rand(stageW), rand(stageH)).alp(2/size).bot().cache();
+    stage.update();
+    }, 1500);
+
+    const points = [[0,-100,0,0,-89.2,69.3,39.5,-30.7],[4840.5,-3523.8,0,0,0,0,0,0,"none"],[0,100,0,0,50,0,-80.1,0],[-100,0,0,0,0,50,0,-50]];
+
+    interval([1,2,3], ()=>{
+    const sOriginX = rand(0,stageW*1.5);
+    const sEndX = sOriginX-stageW;
+    const sSize = rand(.005,.05);
+
+    new Blob ({points:points,color:white})
+    .alp(.5)
+    .sca(sSize)
+    .pos(sOriginX, 0)
+    .animate ({
+    props:{x:sEndX, y:sOriginX*stageH/stageW},
+    time:sSize*10,
+    ease: "linear",
+    call:(target)=>{target.removeFrom()} });
+    },600);
+
+
+    // Logo flying in
+    const logo = asset ("logo-is.png").centerReg()
+    .sca(0.1)
+    .pos(rand(stageW),-300)
+    .animate({
+    props:{x:stageW/2, y:stageH/2, scale:0.3},
+    ease: "linear",
+    time: 3,
+    call:bouncing
+    });
+    stage.update();
+
+
+    // Logo bouncing as it lands
+    
+    function bouncing (){
+    logo.animate({props:[
+    {props:{y:stageH/2-100,rotation:360, alpha:0.5},time:0.5},
+    {props:{y:stageH/2-50, alpha:1},time:3}]
+    });
+
+    stage.update();}
+
+    // user to send the logo away
+
+    const aimer = asset ("aimer.png").sca(0.5).alp(1).centerReg().pos(0,50,CENTER, BOTTOM);
+
+    
+
+    new MotionController(aimer, "mousemove",49);
+    
+    const pPoints=[[-82.1,17.6,0,0,0,0,0,0,"none"],[25.7,17.4,0,0,0,0,0,0,"none"],[64.5,46.4,0,0,-0.4,-32.2,0.4,32.2,"none"],[25,74.1,0,0,0,0,0,0,"none"],[-79.3,73.9,0,0,0,0,0,0,"none"],[-179.7,243.6,0,0,0,0,0,0,"none"],[-220.3,242.9,0,0,0,0,0,0,"none"],[-159.9,72.2,0,0,0,0,0,0,"none"],[-336.5,72.1,0,0,0,0,0,0,"none"],[-357.2,105,0,0,0,0,0,0,"none"],[-399.3,106.8,0,0,0,0,0,0,"none"],[-372.8,44.5,0,0,0,0,0,0,"none"],[-406.5,-16.5,0,0,0,0,0,0,"none"],[-362.8,-15.3,0,0,0,0,0,0,"none"],[-335.9,14,0,0,0,0,0,0,"none"],[-160.1,18.4,0,0,0,0,0,0,"none"],[-228.2,-165.6,0,0,0,0,0,0,"none"],[-190.4,-167.1,0,0,0,0,0,0,"none"]]
+    const plane = new Blob({color:white,borderColor:clear,borderWidth:20,points:pPoints,interactive:false});
+
+
+     Ticker.add(e=>{
+        if (logo.hitTestReg(aimer)){
+            asset("setoff.mp3").play();
+            logo.animate({
+            props:{x: stageW/2, y:-500, scale:1, alpha:0}, time:5, call:(target)=>{target.removeFrom()} });
+
+            if (mobile()){  //plane blob does not work well on mobile
+                
+            const stardust= new Emitter({width:stageW, height:stageH,
+                obj:new Circle(20),
+                random:{color:[white, yellow, orange], scale: {min:.1, max:1.5}, alpha:{min:0.01, max:0.5}},
+                life:5,
+                interval:0.01,
+                force:20})
+                .centerReg()
+                .animate({
+                props:{x: stageW/2, y:-1000}, time:10, call:(target)=>{target.removeFrom()} });
+
+            }else{
+                
+            
+            const stardust= new Emitter({width:stageW, height:stageH,
+                obj:plane,
+                random:{color:white, scale: {min:.01, max:0.3}, alpha:{min:0.01, max:.5}}, //[blue, purple, pink, white, "#ffc312"]
+                life:10,
+                // cache:true,
+                interval:0.01,
+                // sinkForce:10,
+                // gravity:0,
+                force:50 })
+               .centerReg()
+               .animate({
+                props:{alpha:0, x:stageW/2+100}, time:10, call:(target)=>{target.removeFrom()} });
+            
+            }
+            
+            // stardust.animate({props:{rotation:360}, time:6});
+            aimer.removeFrom();
+            
+            
+            timeout(5, ()=>{
+                new Label ("Route draggable and editable. On mobile? Tap somewhere else",20,null,white)
+                    .cache().centerReg().mov(0,-stageH/2+40);
+                new Label ("before tapping on an anchor point to pressmove your route...",20,null,white)
+                    .cache().centerReg().mov(0,-stageH/2+65);
+                
+            });
+          
+          
+         // artBoard created
+            const artBoard = new Container();
+            const bg = new Rectangle (stageH-200,stageH-200,"#ffc312").addTo(artBoard);
+            artBoard.alp(0).center().mov(0,-10);
+            artBoard.animate({
+            props:{alpha:1},
+            wait:6,
+            time: 5,
+            call:setPathValue
+            });
+              
+        // logo parts falling
+            const o = new Label("O",250,"lato",white,blue,null, null, null, null, true)
+            .centerReg()
+            .alp(0)
+            .drag()
+            .pos(0,-100,CENTER)
+            .animate({
+            props:{x:rand(400,stageW-400), y:rand(stageH/4, stageH/3),alpha:1},
+            wait:3,
+            time: 5,
+            });
+            
+            o.padding=0;
+
+            const m = new Label("M",200,"lato",white,blue,null, null, null, null, true)
+            .centerReg()
+            .alp(0)
+            .drag()
+            .pos(0,-100,CENTER)
+            .animate({
+            props:{x:rand(300,stageW-300), y:rand(100,stageH-300),alpha:1},
+            wait:3,
+            time: 5,
+            });
+            stage.update();
+            
+            m.padding=0;
+
+            const g = new Label("G",150,"lato",white,blue,null, null, null, null, true)
+            .centerReg()
+            .alp(0)
+            .pos(0,-100,CENTER)
+            .drag()
+            .animate({
+            props:{x:rand(300,stageW-300), y:rand(200,stageH-200),alpha:1},
+            wait:3,
+            time: 5,
+            });
+            
+            g.padding=0;
+            
+            const random = rand(1.5,2.5);
+            const track = new Blob({color:clear,borderColor:white,borderWidth:5,points:"circle", onTop:false})
+            .centerReg()
+            .top()
+            .alp(0)
+            .pos(0,-100,CENTER)
+            .animate({
+            props:{x:rand(400,stageW-400), y:rand(400,stageH-400),alpha:1,scale: random},
+            wait:3,
+            time: 5,
+            });
+
+    
+
+        // controls created
+            
+            const controlsL = new Container();
+            const dials=[];
+            const dLabels=["O", "M", "G","route"];
+            const colorPickers = [];
+            const colors = ["#ffc312",blue,green,purple,pink,black,grey,grey.lighten(0.5),white];
+
+            loop(4, i=>{
+
+            if (i==0 || i==2){
+
+                dials[i] = new Dial({min:0, max:5,step:0.05, indicatorColor:white, tickColor:blue,innerColor:blue, inner2Color:0, backgroundColor:0, currentValue:1})
+                .centerReg().loc(100, 90+(185)*i,controlsL);
+
+
+                new Label({text:dLabels[i],color:white,align:"center",bold:true,size:20}).loc(101, 79+(185)*i,controlsL);
+                colorPickers[i] = new ColorPicker({
+                                width:150,
+                                cols:9,
+                                selectedIndex:9,
+                                // circles:true,
+                                backgroundColor:clear,
+                                shadowColor:-1,
+                                spacing:0,
+                                colors:["#ffc312",blue,green,purple,pink,black,grey,grey.lighten(0.5),white]})
+                  .centerReg().loc(101, 175+(185)*i,controlsL);}
+
+
+            else {
+                dials[i] = new Dial({min:0, max:5, step:0.05, indicatorColor:white, tickColor:"#ffc312",innerColor:"#ffc312", inner2Color:0, backgroundColor:0, currentValue:1})
+                .centerReg().loc(100, 90+(185)*i,controlsL);
+
+                new Label({text:dLabels[i],color:white,align:"center", bold:true,size:20}).loc(101, 79+(185)*i,controlsL);
+
+                colorPickers[i] = new ColorPicker({
+                                width:150,
+                                cols:9,
+                                selectedIndex:9,
+                                // circles:true,
+                                backgroundColor:clear,
+                                shadowColor:-1,
+                                spacing:0,
+                                colors:colors})
+                    .centerReg().loc(101, 175+(185)*i,controlsL);}
+
+                });
+
+
+            controlsL.alp(0).pos(45,0,LEFT,CENTER);
+            controlsL.animate({
+            props:{alpha:1},
+            wait:6,
+            time: 5
+            });
+
+            
+
+            const controlsR = new Container();
+            // new Rectangle (200,stageH-50).addTo(controlsR).alp(0);
+
+            const buttons=[];
+            const labels=["HEX", "Montage", "Rainbow", "Shake", "Previous"];
+            loop(5, i=>{
+            if (i==0 || i==2 || i==4){
+            const label = new Label({text:labels[i],size:20,color:white});
+            buttons[i] = new Button(120,120,label,black,0,null,null,"#ffc312",null,5).loc(40, 20+(140)*i,controlsR)}
+            else{
+            const label = new Label({text:labels[i],size:20,color:white});
+            buttons[i] = new Button(120,120,label,black,0,null,null,blue,null,5).loc(40, 20+(140)*i,controlsR)}
+            });
+
+            controlsR.alp(0).pos(60,0,RIGHT,CENTER);
+            controlsR.animate({
+            props:{alpha:1},
+            wait:6,
+            time: 5,
+            });
+
+
+            const controlsB = new Container();
+            // new Rectangle (stageH-200,100).addTo(controlsB).alp(0);
+            const sliders=[];
+            const sLabels=["Reset","Mask", "Dashed", "Ride Buddy", "DONE  "];
+            loop(5, i=>{
+                // if (i<4){
+                    sliders[i] = new Slider(0,1,1,"circle",60).centerReg().loc(110*i, 25,controlsB);
+                    const label = new Label({text:sLabels[i],size:20,color:white}).cache().centerReg().loc(112*i-10, 60,controlsB);
+  
+            });
+            
+            controlsB.alp(0).pos(0,30,CENTER,BOTTOM);
+            controlsB.animate({
+            props:{alpha:1},
+            wait:6,
+            time: 5,
+            });
+
+
+            
+            // the on functions to play with O, M, G, route
+
+            dials[0].change(e=>{
+            o.sca(dials[0].currentValue)
+            });
+
+            dials[1].change(e=>{
+            m.sca(dials[1].currentValue)
+            });
+
+            dials[2].change(e=>{
+            g.sca(dials[2].currentValue)
+            });
+
+            dials[3].change(e=>{
+            track.sca(dials[3].currentValue);
+            plane.sca(Math.sqrt(dials[3].currentValue)*.15)
+            });
+
+            colorPickers[0].change(e=>{
+            o.color = e.target.currentValue;
+            });
+
+            colorPickers[1].change(e=>{
+            m.color = e.target.currentValue;
+            });
+
+            colorPickers[2].change(e=>{
+            g.color = e.target.currentValue;
+            });
+
+            colorPickers[3].change(e=>{
+            track.borderColor = e.target.currentValue;
+            plane.color = e.target.currentValue;
+            });
+
+             //control the border
+
+            
+            sliders[0].ord(-1).change(e=>{
+                asset("jelly.mp3").play();
+                if (e.target.currentValue == 1) {
+                track.points= "rectangle";
+                } else {
+                 track.points= "circle";
+                }
+            });
+
+            sliders[1].ord(-1).change(e=>{
+               asset("jelly.mp3").play();
+               if (e.target.currentValue == 1) {
+                    artBoard.setMask(track);}
+                else{
+                    artBoard.setMask(null)
+                }
+            });
+
+            sliders[2].ord(-1).change(e=>{
+                asset("jelly.mp3").play();
+                track.dashed=e.target.currentValue;
+
+            });
+
+            sliders[3].ord(-1).change(e=>{
+                asset("jelly.mp3").play();
+                if (e.target.currentValue == 1) {
+                    plane.alp(1).sca(.15*Math.sqrt(dials[3].currentValue)).addTo().animate({props:{path:track}, time:2, loop:true, ease:"linear"});
+                    track.alpha=0.3;
+
+                }else{
+                    plane.alpha=0;
+                    track.alpha=1;
+                }
+             });
+
+            
+            sliders[4].ord(-1).change(e=>{
+                if (e.target.currentValue == 1) {
+                asset("countdowns.mp3").play();
+                track.animate({props:[{props:{alpha:0},time:0.1},
+                {props:{alpha:1},time:0.1}],loop:true,rewind:true});
+                
+                timeout(5, function(){
+                asset("boomL.mp3").play();
+                new Sprite(asset("boom.png"), 8, 6).sca(5).center().run(2);
+                });
+                
+                timeout(6.15, function(){
+                zgo("index.php");});}
+            });
+
+
+            // the on function to play with the backgroundColor
+
+            buttons[0].on("click", e=>{
+            
+            const bg2=new Rectangle ((stageH-200),(stageH-200)).addTo(artBoard);
+            rHex(bg2);
+            asset("whoosh.mp3").play();});
+
+
+            buttons[1].on("click", e=>{
+            
+            const rS = rand(2,10);
+            const square = new Rectangle ((stageH-200)/rS,(stageH-200)/rS);
+            const montage = new Tile (square,rS,rS,0,0).addTo(artBoard);
+            montage.loop(square=>{
+            rHex(square)
+            });
+            asset("whoosh.mp3").play();
+            });
+
+            buttons[2].on("click", e=>{
+            const rR = rand(2,9);
+            const bar = new Rectangle (stageH-200,(stageH-200)/rR);
+            const rainbow = new Tile (bar,1,rR,0,0).addTo(artBoard);
+            rainbow.loop(bar=>{
+            rHex(bar);
+            });
+            asset("whoosh.mp3").play();});
+
+            buttons[3].on("click", e=>{
+            artBoard.centerReg().animate({props:{rotation:[45,90,180]},
+            time:1
+            });
+            asset("whoosh.mp3").play();
+            });
+
+            buttons[4].on("click", e=>{
+            loop(artBoard, design=>{
+            design.top();
+            asset("whoosh.mp3").play();});
+            });
+
+            function rHex(shape) {
+            let pantone = "#";
+            const codes = ["a","b","c","d","e","f","0","1","2","3","4","5","6","7","8","9"];
+            loop(6, i=>{
+            pantone += shuffle(codes)[0]});
+            shape.color=pantone}
+
+            function setPathValue(){
+                dials[3].currentValue=random;
+            }
+
+
+
+
+}
+});
+    //
+    stage.update();
+});
+
+</script>
+<meta name="viewport" content="width=device-width, user-scalable=no" />
+</head>
+<body></body>
+</html>
+
